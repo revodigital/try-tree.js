@@ -18,17 +18,24 @@ const controls = new OrbitControls( camera, renderer.domElement );
 controls.update();
 
 const loader = new GLTFLoader();
+const arrowsScale = .6
 
 loader.load( './file.gltf', function ( gltf ) {
 	scene.add( gltf.scene );
 	controls.target.set( 0, 0.5, 0 ); // Set the point to look at (optional)
 	controls.update();
-gltf.scene.position.set(0,-10,0)
+	gltf.scene.position.set(0,-10,0)
 	gltf.scene.traverse(function (child) {
-    if (child.isMesh && child.name === "palo") {
-        child.rotation.x += Math.PI / 15; // rotates the mesh by 45 degrees on the x-axis
-    }
-});
+		if (child.isMesh && child.name === "palo") {
+			child.rotation.x +=( Math.PI / 180) * 15; // rotates the mesh by 15 degrees on the x-axis
+		}
+		if (child.isMesh && child.name === "arrows") {
+			// this are the base number
+			child.scale.x = 0.113 * arrowsScale; // rotates the mesh by 45 degrees on the x-axis
+			child.scale.y = 9.778 * arrowsScale; // rotates the mesh by 45 degrees on the x-axis
+			child.scale.z = 0.113 * arrowsScale; // rotates the mesh by 45 degrees on the x-axis
+		}
+	});
 }, undefined, function ( error ) {
 	console.error( error );
 } );

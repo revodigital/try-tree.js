@@ -8,7 +8,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader';
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x252525);
+scene.background = new THREE.Color(0x99ffff);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -116,6 +116,8 @@ let draggable = null;
 // Set up raycaster and mouse vector
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+let offset = new THREE.Vector3();
+let intersection = new THREE.Vector3();
 
 let selectedObject = null;
 const selectedObjects = [];
@@ -133,6 +135,14 @@ effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.in
 composer.addPass(effectFXAA);
 
 
+
+const red = new THREE.LineBasicMaterial({ color: 0xff0000 });
+const points = [new THREE.Vector3(), new THREE.Vector3()];
+const geometry = new THREE.BufferGeometry().setFromPoints(points);
+const rayLine = new THREE.Line(geometry, red);
+scene.add(rayLine);
+
+
 window.addEventListener('mousedown', (event) => {
 
   event.preventDefault();
@@ -142,14 +152,20 @@ window.addEventListener('mousedown', (event) => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   // Update the raycaster with the camera and mouse position
-  raycaster.setFromCamera(mouse, camera);
+    raycaster.setFromCamera(mouse, camera);
+    
+  // Visualize the ray
+  const origin = raycaster.ray.origin;
+  const direction = raycaster.ray.direction.clone().multiplyScalar(1000); // Extend the ray for visualization
+  const points = [origin, origin.clone().add(direction)];
+  rayLine.geometry.setFromPoints(points);
 
   // Calculate objects intersecting the ray
   const intersects = raycaster.intersectObjects(scene.children, true);
 
   if (intersects.length > 0) {
     selectedObject = intersects[0].object;
-    selectedObject.material.color.set(0xff0000); // Highlight the object
+    // selectedObject.material.color.set(0xff0000); // Highlight the object
       
     outlinePass.selectedObjects = [selectedObject];
 
@@ -194,7 +210,11 @@ window.addEventListener('mousemove', (event) => {
 
     // Calculate the new position for the selected object
     const planeIntersect = raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), intersection);
-    selectedObject.position.copy(planeIntersect.sub(offset));
+    const newPosition = planeIntersect.sub(offset);
+
+    // Limita il movimento agli assi X e Y
+    selectedObject.position.x = newPosition.x;
+    selectedObject.position.z = newPosition.z;
   }
 });
 
@@ -202,7 +222,7 @@ window.addEventListener('mouseup', () => {
     // draggable = null;
 
   if (selectedObject) {
-    selectedObject.material.color.set(0x00ff00); // Reset color
+    // selectedObject.material.color.set(0x00ff00); // Reset color
     selectedObject = null;
     outlinePass.selectedObjects = []
     controls.enabled = true;

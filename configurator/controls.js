@@ -45,12 +45,11 @@ export function handleMouseMove(event, scene, camera) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-
     const planeIntersect = raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), intersection);
     const newPosition = planeIntersect.sub(offset);
 
     selectedObject.position.x = newPosition.x;
-    selectedObject.position.z = newPosition.z;
+    selectedObject.position.y = newPosition.y;
 }
 
 export function handleMouseUp(event, controls) {

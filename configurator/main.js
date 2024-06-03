@@ -16,11 +16,23 @@ document.body.appendChild(renderer.domElement);
 setupLights(scene);
 setupObjects(scene);
 
-const controls = new OrbitControls(camera, renderer.domElement);
-setupControls(controls, scene, camera, renderer);
-
 camera.position.set(0, 0, 20);
 camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableRotate = true; // Disable rotation for a fixed top-down view
+controls.enableDamping = true; // Enable damping (smooth camera movement)
+controls.dampingFactor = 0.25; // Damping inertia
+controls.screenSpacePanning = false; // Pan orthogonal to world-space direction camera.up
+
+// Restrict panning and zooming
+controls.minDistance = 5; // Minimum zoom distance
+controls.maxDistance = 25; // Maximum zoom distance
+// controls.maxPolarAngle = Math.PI / 2; // Limit the vertical angle to avoid flipping
+
+// Restrict panning
+controls.maxPan = new THREE.Vector3(20, 0, 20); // Maximum panning boundaries
+controls.minPan = new THREE.Vector3(-20, 0, -20); // Minimum panning boundaries
 
 // Limit the amount of orbit
 const azimuthAngle = THREE.MathUtils.degToRad(30); // 30 degrees
@@ -29,6 +41,8 @@ controls.minAzimuthAngle = -azimuthAngle;
 controls.maxAzimuthAngle = azimuthAngle;
 controls.minPolarAngle = Math.PI / 2 - polarAngle; // Limit to 90 degrees minus 20 degrees
 controls.maxPolarAngle = Math.PI / 2 + polarAngle; // Limit to 90 degrees plus 20 degrees
+
+setupControls(controls, scene, camera, renderer);
 
 const composer = setupPostProcessing(renderer, scene, camera);
 

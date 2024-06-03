@@ -12,11 +12,20 @@ let newCube = null;
 const cubeItem = document.getElementById('cube-item');
 
 
+function getMousePosition(event, domElement) {
+    const rect = domElement.getBoundingClientRect();
+    return {
+        x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        y: -((event.clientY - rect.top) / rect.height) * 2 + 1
+    };
+}
+
+
 cubeItem.addEventListener('mousedown', (event) => {
 
     isDragging = true;
     newCube = new THREE.Mesh(new THREE.BoxGeometry(2, 3, 2), new THREE.MeshPhysicalMaterial({ color: 0x0000ff }));
-    newCube.position.set(0,0,1) 
+    newCube.position.set(0,1000,1) 
     scene.add(newCube);
     console.log(`created cube`);
     

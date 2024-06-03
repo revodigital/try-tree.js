@@ -10,9 +10,14 @@ scene.background = new THREE.Color(0x99ffff);
 
 const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
 
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+// document.body.appendChild(renderer.domElement);
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+window.addEventListener('resize', onWindowResize, false);
 
 setupLights(scene);
 setupObjects(scene);
@@ -60,3 +65,22 @@ function animate() {
 animate();
 
 
+
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// function onWindowResize() {
+//     camera.aspect = window.innerWidth / window.innerHeight;
+//     camera.updateProjectionMatrix();
+//     renderer.setSize( window.innerWidth, window.innerHeight );
+//     render();
+// }
+
+
+// function render() {
+//     renderer.render( scene, camera );
+// }

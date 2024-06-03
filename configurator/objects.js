@@ -4,12 +4,6 @@ import { GUI } from 'dat.gui';
 var pi = Math.PI;
 
 export function setupObjects(scene) {
-    const shapes = {
-        Cube: () => new THREE.BoxGeometry(2, 2, 2),
-        Sphere: () => new THREE.SphereGeometry(1, 32, 32),
-        Pyramid: () => new THREE.ConeGeometry(1.5, 2, 4)
-    };
-
     const material = new THREE.MeshPhysicalMaterial({ color: 0x00ff00 });
     const state = {
         selectedShape: 'Cube'
@@ -54,15 +48,18 @@ export function setupObjects(scene) {
     }
 
     // GUI for shape selection
+    const shapes = {
+        Cube: () => new THREE.BoxGeometry(2, 2, 2),
+        Sphere: () => new THREE.SphereGeometry(1, 32, 32),
+        Pyramid: () => new THREE.ConeGeometry(1.5, 2, 4)
+    };
+
     const gui = new GUI();
     gui.add(state, 'selectedShape', Object.keys(shapes));
 }
 
 
-function degrees_to_radians(degrees)
-{
-  // Store the value of pi.
+function degrees_to_radians(degrees){
   var pi = Math.PI;
-  // Multiply degrees by pi divided by 180 to convert to radians.
   return degrees * (pi/180);
 }

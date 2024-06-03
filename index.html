@@ -4,10 +4,37 @@
 		<meta charset="utf-8">
 		<title>My first three.js app</title>
 		<style>
-			body { margin: 0; padding: 0px; }
+        body { margin: 0; }
+        #canvas { display: block; }
+        #sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100%;
+            background: #333;
+            color: white;
+            padding: 10px;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+        }
+        .menu-item {
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px 0;
+            background: #444;
+            text-align: center;
+            user-select: none;
+        }
 		</style>
 	</head>
 	<body>
+		<div id="sidebar">
+			<br>
+			<br>
+			<br>
+			<br>
+			<div class="menu-item" id="cube-item">Cube</div>
+		</div>
 		<!-- <div
 		style="background:linear-gradient(rgb(235, 168, 149),rgb(255, 255, 255));"
 		><h2 style="padding: 15px 30px; font-size: 20px; font-style: oblique; margin:0px">Prova tree js</h2></div> -->

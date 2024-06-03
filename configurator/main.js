@@ -5,13 +5,14 @@ import { setupObjects } from './objects';
 import { setupControls, handleMouseDown, handleMouseMove, handleMouseUp } from './controls';
 import { setupPostProcessing } from './postprocessing';
 
-const scene = new THREE.Scene();
+export const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x99ffff);
 
 const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
 
 setupLights(scene);
 setupObjects(scene);
@@ -57,3 +58,5 @@ function animate() {
 }
 
 animate();
+
+

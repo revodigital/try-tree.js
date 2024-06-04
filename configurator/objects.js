@@ -3,6 +3,8 @@ import { GUI } from 'dat.gui';
 
 var pi = Math.PI;
 
+export const cilinders = []
+
 export function setupObjects(scene) {
     const material = new THREE.MeshPhysicalMaterial({ color: 0x00ff00 });
     const state = {
@@ -10,7 +12,9 @@ export function setupObjects(scene) {
     };
 
     // Plane
-    const planeGeometry = new THREE.BoxGeometry(20, 2, 7);
+    const planeGeometry = new THREE.BoxGeometry(20, 2, 6);
+
+const outlineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
     const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x666666 });
     planeGeometry.castShadow = true;
     planeGeometry.receiveShadow = true;
@@ -45,6 +49,8 @@ export function setupObjects(scene) {
         cylinder3.position.z = 1;
         cylinder3.rotateX(degrees_to_radians(90));
         scene.add(cylinder3);
+        
+        cilinders.push(...[cylinder1,cylinder2,cylinder3])
     }
 
     // GUI for shape selection

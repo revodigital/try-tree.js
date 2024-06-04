@@ -16,7 +16,15 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 // document.body.appendChild(renderer.domElement);
-document.getElementById('canvas-container').appendChild(renderer.domElement);
+// document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+
+const container = document.createElement('div');
+container.id = 'canv'
+document.body.appendChild(container);
+container.appendChild( renderer.domElement );
+    
+// document.body.appendChild( renderer.domElement );
 window.addEventListener('resize', onWindowResize, false);
 
 setupLights(scene);

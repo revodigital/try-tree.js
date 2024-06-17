@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { scene } from './main';
-import { cilinders } from './objects';
+import { cilinders, eletrPart } from './objects';
+
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -25,14 +26,15 @@ function getMousePosition(event, domElement) {
 
 
 cubeItem.addEventListener('mousedown', (event) => {
-
     isDragging = true;
-    newCube = new THREE.Mesh(new THREE.BoxGeometry(2, 3, 2), new THREE.MeshPhysicalMaterial({ color: 0x0000ff }));
+
+    // let clone = eletrPart.clone(); 
+    newCube =  eletrPart.clone();  // new THREE.Mesh(new THREE.BoxGeometry(0.5, 1, 0.2), new THREE.MeshPhysicalMaterial({ color: 0x0000ff }));
     newCube.position.set(0,1000,1) 
     scene.add(newCube);
     cubes.push(newCube);
-    console.log(`created cube`);
-    
+
+    console.log(`created cube ${cubes.length} ${cubes}`,);
 });
 
 export function setupControls(controls, scene, camera, renderer) {
@@ -162,7 +164,7 @@ export function handleMouseMove(event, scene, camera) {
         // selectedObject.position.x = newPosition.x;
         // selectedObject.position.y = newPosition.y;
 
-              const allowedPositions = cilinders.map(e => e.position)
+        const allowedPositions = cilinders.map(e => e.position)
 
         // Convert mouse position to normalized device coordinates (-1 to +1)
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;

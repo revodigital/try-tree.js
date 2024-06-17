@@ -19,7 +19,7 @@ export function setupLights(scene) {
     scene.add(helper);
 
     // Create a point light
-    const pointLight = new THREE.PointLight(0xff0000, 1000.0);
+    const pointLight = new THREE.PointLight(0xddeeee, 1000.0);
     pointLight.position.set(-10, 10, 20);
     pointLight.castShadow = true;
     pointLight.shadow.mapSize.width = 512;

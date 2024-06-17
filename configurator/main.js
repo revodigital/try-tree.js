@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupLights } from './lights';
-import { setupObjects } from './objects';
+import { setupObjects, crateBoard } from './objects';
 import { setupControls, handleMouseDown, handleMouseMove, handleMouseUp } from './controls';
 import { setupPostProcessing } from './postprocessing';
 
@@ -19,6 +19,7 @@ renderer.shadowMap.type = THREE.PCFShadowMap;
 // document.getElementById('canvas-container').appendChild(renderer.domElement);
 
 
+
 const container = document.createElement('div');
 container.id = 'canv'
 document.body.appendChild(container);
@@ -29,6 +30,7 @@ window.addEventListener('resize', onWindowResize, false);
 
 setupLights(scene);
 setupObjects(scene);
+crateBoard(scene)
 
 camera.position.set(0, 0, 20);
 camera.lookAt(0, 0, 0);
@@ -70,10 +72,6 @@ function animate() {
     composer.render();
 }
 
-animate();
-
-
-
 
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -81,6 +79,9 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+
+
+animate();
 // function onWindowResize() {
 //     camera.aspect = window.innerWidth / window.innerHeight;
 //     camera.updateProjectionMatrix();

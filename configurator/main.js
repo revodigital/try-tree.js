@@ -1,14 +1,16 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupLights } from './lights';
-import { setupObjects, crateBoard } from './objects';
+import {  crateBoard } from './objects';
 import { setupControls, handleMouseDown, handleMouseMove, handleMouseUp, onKeyDown} from './controls';
 import { setupPostProcessing } from './postprocessing';
+
+var times = 0;
 
 export const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x99ffff);
 
-const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+export const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 renderer.setPixelRatio( window.devicePixelRatio );
@@ -29,8 +31,8 @@ container.appendChild( renderer.domElement );
 window.addEventListener('resize', onWindowResize, false);
 
 setupLights(scene);
-setupObjects(scene);
 crateBoard(scene)
+
 
 camera.position.set(0, 0, 20);
 camera.lookAt(0, 0, 0);

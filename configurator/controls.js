@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { scene } from './main';
+import { scene, camera } from './main';
 import { cilinders, eletrPart ,eletrPart1, eletrPart2} from './objects';
 
 
@@ -19,7 +19,6 @@ export const cubes = []
 export const placedCubesData = []
 export const occupiedPositions = []
 export const availablePositions = []
-export const avaiblePosition  = []
 
 cubeItem.addEventListener('mousedown', (event) => {
     isDragging = true;
@@ -31,6 +30,7 @@ cubeItem.addEventListener('mousedown', (event) => {
     CurrentDataId = placedCubesData.push({ cube: newCube, id: newCube.id, positionIndex: -1 })
     console.log(CurrentDataId);
     CurrentDataId--;
+    console.log('executed');
 });
 
 cubeItem2.addEventListener('mousedown', (event) => {
@@ -93,7 +93,7 @@ function addDebugLine(start, end) {
 }
 
 
-export function handleMouseDown(event, controls, scene, camera) {
+export function handleMouseDown(event, controls, scene) {
     event.preventDefault();
 
     // availablePositions.filter((val,index)=> !occupiedPositions.includes(index))
@@ -111,7 +111,7 @@ export function handleMouseDown(event, controls, scene, camera) {
 
     }
 
-    if (intersects.length > 0 && cubes.includes(intersects[0].object.parent.id)) {
+    if (intersects.length > 0 && cubes.includes(intersects[0].object?.parent?.id)) {
 
         selectedObject = intersects[0].object.parent;
         
@@ -127,7 +127,7 @@ export function handleMouseDown(event, controls, scene, camera) {
 
 let CurrentDataId 
 
-export function handleMouseMove(event, scene, camera) {
+export function handleMouseMove(event, scene) {
     if (isDragging && (newCube || selectedObject)) {
 
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -194,7 +194,9 @@ function findNearestAvailablePosition(currentPosition, availablePositions ) {
     for (let i = 1; i < availablePositions.length; i++) {
         const distance = currentPosition.distanceTo(availablePositions[i]);
 
+        
         if (distance < minDistance && !occupiedPositions.includes(i)) {
+            // console.log(i);
             nearestPosition = availablePositions[i];
             minDistance = distance;
             indexPos = i
@@ -205,70 +207,70 @@ function findNearestAvailablePosition(currentPosition, availablePositions ) {
 }
 
 
-// export function onKeyDown(event, controls) {
-//     console.log(`event.key ${selectedObject}`, event.key);
-//     if (selectedObject && event.key === 'd') {
-//         selectedObject.position.x += 10;
-//     }
-//     if (selectedObject && event.key === 'a') {
-//         selectedObject.position.x -= 10;
-//     }
-//     if (selectedObject && event.key === 'w') {
-//         selectedObject.position.z -= 10;
-//     }
-//     if (selectedObject && event.key === 's') {
-//         selectedObject.position.z += 10;
-//     }
-// }
-
-
-
-export function onKeyDown(event, controls,) {
-    console.log(`Key pressed: ${event.key} with selectedObject: ${selectedObject}`);
-    const allowedPositions = cilinders.map(e => e.position)
-    if (!selectedObject) return;
-
-    let currentPosition = selectedObject.position.clone(); // Clone current position to modify
-    let newPosition;
-
-    // Check which key was pressed and calculate the potential new position
-    switch (event.key) {
-        case 'd': // Move right
-            newPosition = findNearestAvailablePosition(
-                new THREE.Vector3(currentPosition.x + 10, currentPosition.y, currentPosition.z),
-                allowedPositions,
-                occupiedPositions.filter(pos => pos.z === currentPosition.z) // Filter for the same z-axis
-            );
-            break;
-        case 'a': // Move left
-            newPosition = findNearestAvailablePosition(
-                new THREE.Vector3(currentPosition.x - 10, currentPosition.y, currentPosition.z),
-                allowedPositions,
-                occupiedPositions.filter(pos => pos.z === currentPosition.z) // Filter for the same z-axis
-            );
-            break;
-        case 'w': // Move forward
-            newPosition = findNearestAvailablePosition(
-                new THREE.Vector3(currentPosition.x, currentPosition.y, currentPosition.z - 10),
-                allowedPositions,
-                occupiedPositions.filter(pos => pos.x === currentPosition.x) // Filter for the same x-axis
-            );
-            break;
-        case 's': // Move backward
-            newPosition = findNearestAvailablePosition(
-                new THREE.Vector3(currentPosition.x, currentPosition.y, currentPosition.z + 10),
-                allowedPositions,
-                occupiedPositions.filter(pos => pos.x === currentPosition.x) // Filter for the same x-axis
-            );
-            break;
-        default:
-            return; // Exit if other keys are pressed
+export function onKeyDown(event, controls) {
+    console.log(`event.key ${selectedObject}`, event.key);
+    if (selectedObject && event.key === 'd') {
+        selectedObject.position.x += 1;
     }
-
-    // If a new position is found, move the selected object to that position
-    if (newPosition) {
-        selectedObject.position.copy(newPosition);
-    } else {
-        console.log("No available positions to move to in the desired direction.");
+    if (selectedObject && event.key === 'a') {
+        selectedObject.position.x -= 1;
+    }
+    if (selectedObject && event.key === 'w') {
+        selectedObject.position.y -= 1;
+    }
+    if (selectedObject && event.key === 's') {
+        selectedObject.position.y += 1;
     }
 }
+
+
+
+// export function onKeyDown(event, controls,) {
+//     console.log(`Key pressed: ${event.key} with selectedObject: ${selectedObject}`);
+//     const allowedPositions = cilinders.map(e => e.position)
+//     if (!selectedObject) return;
+
+//     let currentPosition = selectedObject.position.clone(); // Clone current position to modify
+//     let newPosition;
+
+//     // Check which key was pressed and calculate the potential new position
+//     switch (event.key) {
+//         case 'd': // Move right
+//             newPosition = findNearestAvailablePosition(
+//                 new THREE.Vector3(currentPosition.x + 10, currentPosition.y, currentPosition.z),
+//                 allowedPositions,
+//                 occupiedPositions.filter(pos => pos.z === currentPosition.z) // Filter for the same z-axis
+//             );
+//             break;
+//         case 'a': // Move left
+//             newPosition = findNearestAvailablePosition(
+//                 new THREE.Vector3(currentPosition.x - 10, currentPosition.y, currentPosition.z),
+//                 allowedPositions,
+//                 occupiedPositions.filter(pos => pos.z === currentPosition.z) // Filter for the same z-axis
+//             );
+//             break;
+//         case 'w': // Move forward
+//             newPosition = findNearestAvailablePosition(
+//                 new THREE.Vector3(currentPosition.x, currentPosition.y, currentPosition.z - 10),
+//                 allowedPositions,
+//                 occupiedPositions.filter(pos => pos.x === currentPosition.x) // Filter for the same x-axis
+//             );
+//             break;
+//         case 's': // Move backward
+//             newPosition = findNearestAvailablePosition(
+//                 new THREE.Vector3(currentPosition.x, currentPosition.y, currentPosition.z + 10),
+//                 allowedPositions,
+//                 occupiedPositions.filter(pos => pos.x === currentPosition.x) // Filter for the same x-axis
+//             );
+//             break;
+//         default:
+//             return; // Exit if other keys are pressed
+//     }
+
+//     // If a new position is found, move the selected object to that position
+//     if (newPosition) {
+//         selectedObject.position.copy(newPosition);
+//     } else {
+//         console.log("No available positions to move to in the desired direction.");
+//     }
+// }

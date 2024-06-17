@@ -53,13 +53,15 @@ export function setupControls(controls, scene, camera, renderer) {
     const red = new THREE.LineBasicMaterial({ color: 0xff0000 });
     const points = [new THREE.Vector3(), new THREE.Vector3()];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
     const rayLine = new THREE.Line(geometry, red);
     scene.add(rayLine);
-
+    
     window.addEventListener('mousedown', (event) => handleMouseDown(event, controls, scene, camera));
     window.addEventListener('mousemove', (event) => handleMouseMove(event, scene, camera));
     window.addEventListener('mouseup', (event) => handleMouseUp(event, controls));
 }
+
 
 export function handleMouseDown(event, controls, scene, camera) {
     event.preventDefault();
@@ -70,6 +72,10 @@ export function handleMouseDown(event, controls, scene, camera) {
     raycaster.setFromCamera(mouse, camera);
 
     const intersects = raycaster.intersectObjects(scene.children, true);
+
+    if (intersects.length > 0) {
+        console.log(`intersects`, intersects[0]);
+    }
 
     if (intersects.length > 0 && cubes.includes(intersects[0].object)) {
         selectedObject = intersects[0].object;
@@ -130,6 +136,11 @@ export function handleMouseMove(event, scene, camera) {
         // objects position experiment
 
         // Define the list of allowed positions
+
+//
+// position of thåe objects
+//
+
         const allowedPositions = cilinders.map(e => e.position)
 
         // Convert mouse position to normalized device coordinates (-1 to +1)
@@ -157,7 +168,6 @@ export function handleMouseMove(event, scene, camera) {
 
         newCube.position.copy(nearestPosition);
     } else {
-
         if (!selectedObject) return;
 
         // event.preventDefault();

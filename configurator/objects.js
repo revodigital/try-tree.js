@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GUI } from 'dat.gui';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
-import { metallicMaterial1,metallicMaterial2,metallicMaterial3 } from './materials';
+import { metallicMaterial1,metallicMaterial2,metallicMaterial3,metallicMaterialRed, metallicMaterialBlue } from './materials';
 
 var pi = Math.PI;
 
@@ -230,16 +230,33 @@ loader.load(
     (object) => {
     object.traverse((child) => {
       if (child.isMesh) {
-        child.material = metallicMaterial2; // Apply the metallic material to each mesh
+        child.material = metallicMaterial2;
       }
     });
-        const i = 4
+        const i = 3.6
+
         object.scale.set(fbxScale * i, fbxScale * i, fbxScale * i);
         object.rotateX(degToRad(90))
         eletrPart = object
+
+        eletrPart1 = eletrPart.clone(); 
+        eletrPart2 = eletrPart.clone(); 
+
+        eletrPart1.traverse((child) => {
+            if (child.isMesh) {
+                child.material = metallicMaterialRed; 
+            }
+        });
+
+        eletrPart2.traverse((child) => {
+            if (child.isMesh) {
+                child.material = metallicMaterialBlue;
+            }
+        });
+
     },
   (xhr) => {},
-    (error) => {
+  (error) => {
     console.log('An error happened', error); 
   }
 );
@@ -248,3 +265,5 @@ loader.load(
 }
 
 export let eletrPart;
+export let eletrPart1;
+export let eletrPart2;

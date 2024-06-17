@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { scene } from './main';
-import { cilinders, eletrPart } from './objects';
+import { cilinders, eletrPart ,eletrPart1, eletrPart2} from './objects';
 
 
 const raycaster = new THREE.Raycaster();
@@ -12,30 +12,42 @@ let selectedObject = null;
 let isDragging = false;
 let newCube = null;
 const cubeItem = document.getElementById('cube-item');
+const cubeItem2 = document.getElementById('cube-item2');
+const cubeItem3 = document.getElementById('cube-item3');
 
 export const cubes = []
 
-
-function getMousePosition(event, domElement) {
-    const rect = domElement.getBoundingClientRect();
-    return {
-        x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
-        y: -((event.clientY - rect.top) / rect.height) * 2 + 1
-    };
-}
-
-
 cubeItem.addEventListener('mousedown', (event) => {
     isDragging = true;
-
-    // let clone = eletrPart.clone(); 
-    newCube =  eletrPart.clone();  // new THREE.Mesh(new THREE.BoxGeometry(0.5, 1, 0.2), new THREE.MeshPhysicalMaterial({ color: 0x0000ff }));
+    newCube =  eletrPart.clone(); 
     newCube.position.set(0,1000,1) 
     scene.add(newCube);
     cubes.push(newCube);
-
-    console.log(`created cube ${cubes.length} ${cubes}`,);
 });
+
+cubeItem2.addEventListener('mousedown', (event) => {
+    isDragging = true;
+    newCube =  eletrPart1.clone(); 
+    newCube.position.set(0,1000,1) 
+    scene.add(newCube);
+    cubes.push(newCube);
+});
+
+cubeItem3.addEventListener('mousedown', (event) => {
+    isDragging = true;
+    newCube =  eletrPart2.clone(); 
+    newCube.position.set(0,1000,1) 
+    scene.add(newCube);
+    cubes.push(newCube);
+});
+
+// function getMousePosition(event, domElement) {
+//     const rect = domElement.getBoundingClientRect();
+//     return {
+//         x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+//         y: -((event.clientY - rect.top) / rect.height) * 2 + 1
+//     };
+// }
 
 export function setupControls(controls, scene, camera, renderer) {
     const red = new THREE.LineBasicMaterial({ color: 0xff0000 });

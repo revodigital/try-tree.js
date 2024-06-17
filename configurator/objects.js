@@ -88,9 +88,10 @@ loader.load(
         child.material = metallicMaterial1; // Apply the metallic material to each mesh
       }
     });
-        object.scale.set(fbxScale, fbxScale, fbxScale); 
+        object.scale.set(fbxScale * 0.93, fbxScale * 0.77, fbxScale); 
+        // let vect = object.position
+        object.position.z = 0.6
         scene.add(object);
-        // animate();
   },
   (xhr) => {
     console.log((xhr.loaded / xhr.total * 100) + '% loaded');
@@ -116,7 +117,7 @@ loader.load(
         const horizontalCount = 20;  // Number of objects in each horizontal array
         const verticalCount = 7;    // Number of horizontal arrays
         const horizontalSpacing = 0.0;  // Spacing between objects in the horizontal array
-        const verticalSpacing = 2;    // Spacing between horizontal arrays
+        const verticalSpacing = 1.5;    // Spacing between horizontal arrays
 
         const objectWidth = 30 * fbxScale;  // Width of each object
         const objectHeight = 38.5 * fbxScale;  // Height of each object
@@ -165,13 +166,14 @@ loader.load(
       }
     });
         
-        object.scale.set(fbxScale, fbxScale, 0.005);
+        object.scale.set(fbxScale, fbxScale * 0.6, 0.005);
         // scene.add(object);
 
         const horizontalCount = 5;  // Number of objects in each horizontal array
-        const verticalCount = 7 + 1;    // Number of horizontal arrays
+        const verticalCount = 8;    // Number of horizontal arrays
         const horizontalSpacing = 0.0;  // Spacing between objects in the horizontal array
-        const verticalSpacing = 2;    // Spacing between horizontal arrays
+        const verticalSpacing = 1.5
+            ;    // Spacing between horizontal arrays
 
         const objectWidth = 140 * fbxScale;  // Width of each object
         const objectHeight = 38.5
@@ -197,17 +199,20 @@ loader.load(
             }
         }
 
-        const offsetXX = ((11 + horizontalSpacing) / -2)
-        const offsetYY = ((objectWidth * 8) / -2)
+        const HorizzontalNumberBorder = 11
+        const VerticalNumberBorder = verticalCount-1
+
+        const offsetXX = ((HorizzontalNumberBorder + horizontalSpacing) / -2)
+        const offsetYY = ((objectWidth * VerticalNumberBorder ) / -2 + objectWidth/2)
 
         // Create horizontal arrays of objects
         for (let i = 0; i < 2; i++) {
-            for (let j = 0; j < 9; j++) {
+            for (let j = 0; j < VerticalNumberBorder; j++) {
                 let clone = object.clone();  // Clone the object for each instance
                 // Position each clone in a grid, centered
                 clone.position.y = offsetYY  + j * (objectWidth);
 
-                clone.position.x = offsetXX + i * (11 + horizontalSpacing);
+                clone.position.x = offsetXX + i * (HorizzontalNumberBorder + horizontalSpacing);
 
                 clone.rotateZ(degToRad(90))
                 

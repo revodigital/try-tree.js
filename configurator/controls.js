@@ -70,20 +70,16 @@ export function handleMouseDown(event, controls, scene, camera) {
     raycaster.setFromCamera(mouse, camera);
 
     const intersects = raycaster.intersectObjects(scene.children, true);
+
     if (intersects.length > 0 && cubes.includes(intersects[0].object)) {
-
-
         selectedObject = intersects[0].object;
-
         controls.enabled = false;
-
         const planeIntersect = raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), intersection);
         offset.copy(planeIntersect).sub(selectedObject.position);
     }
 }
 
 export function handleMouseMove(event, scene, camera) {
-    
     if (isDragging && newCube) {
 
 // free experiment

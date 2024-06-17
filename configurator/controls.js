@@ -18,6 +18,7 @@ const cubeItem3 = document.getElementById('cube-item3');
 export const cubes = []
 export const placedCubesData = []
 export const occupiedPositions = []
+export const availablePositions = []
 export const avaiblePosition  = []
 
 cubeItem.addEventListener('mousedown', (event) => {
@@ -25,9 +26,11 @@ cubeItem.addEventListener('mousedown', (event) => {
     newCube =  eletrPart.clone(); 
     newCube.position.set(0,1000,1) 
     scene.add(newCube);
-    console.log(`newCube`, newCube.children[0]);
+    // console.log(`newCube`, newCube.children[0]);
     cubes.push(newCube.id);
-    placedCubesData.push({cube: newCube, id: newCube.id, positionIndex: -1 })
+    CurrentDataId = placedCubesData.push({ cube: newCube, id: newCube.id, positionIndex: -1 })
+    console.log(CurrentDataId);
+    CurrentDataId--;
 });
 
 cubeItem2.addEventListener('mousedown', (event) => {
@@ -36,7 +39,7 @@ cubeItem2.addEventListener('mousedown', (event) => {
     newCube.position.set(0,1000,1) 
     scene.add(newCube);
     cubes.push(newCube.id);
-    placedCubesData.push({cube: newCube, id: newCube.id, positionIndex: -1 })
+    CurrentDataId = placedCubesData.push({ cube: newCube, id: newCube.id, positionIndex: -1 })
 });
 
 cubeItem3.addEventListener('mousedown', (event) => {
@@ -45,7 +48,7 @@ cubeItem3.addEventListener('mousedown', (event) => {
     newCube.position.set(0,1000,1) 
     scene.add(newCube);
     cubes.push(newCube.id);
-    placedCubesData.push({cube: newCube, id: newCube.id, positionIndex: -1 })
+    CurrentDataId = placedCubesData.push({ cube: newCube, id: newCube.id, positionIndex: -1 })
 });
 
 function getMousePosition(event, domElement) {
@@ -93,6 +96,8 @@ function addDebugLine(start, end) {
 export function handleMouseDown(event, controls, scene, camera) {
     event.preventDefault();
 
+    // availablePositions.filter((val,index)=> !occupiedPositions.includes(index))
+
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -103,11 +108,14 @@ export function handleMouseDown(event, controls, scene, camera) {
     if (intersects.length > 0) {
         const firstIntersect = intersects[0];
         addDebugLine(camera.position, firstIntersect.point);
+
     }
 
     if (intersects.length > 0 && cubes.includes(intersects[0].object.parent.id)) {
-        console.log('intersected')
-        selectedObject = intersects[0].object;
+
+        selectedObject = intersects[0].object.parent;
+        
+        console.log('intersected', selectedObject)
         controls.enabled = false;
         
         // Questo offset può essere usato per muovere l'oggetto in maniera consistente rispetto al punto di click originale durante operazioni di trascinamento o altri tipi di manipolazione interattiva.
@@ -117,36 +125,40 @@ export function handleMouseDown(event, controls, scene, camera) {
     }
 }
 
+let CurrentDataId 
+
 export function handleMouseMove(event, scene, camera) {
     if (isDragging && (newCube || selectedObject)) {
-        const objId = (newCube || selectedObject).id
 
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
         raycaster.setFromCamera(mouse, camera);
 
+        const objId = (newCube || selectedObject).id
         const planeIntersect = raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), intersection);
         const newPosition = planeIntersect.sub(offset);
 
-        const currentIndexPos = placedCubesData.find(e=> e.id === objId)
+        // console.log(currentIndexPos );
 
-        const nearestPosition = findNearestAvailablePosition(newPosition);
+        const nearestPosition = findNearestAvailablePosition(newPosition, availablePositions);
 
         if (nearestPosition) {
+            // console.log(`nearestPosition.position`, nearestPosition.position);
             (newCube || selectedObject).position.copy(nearestPosition.position);
 
             // se non è nuovo deve togliere la vecchia posizione e mettere la nuova
-            if (currentIndexPos !== -1) {
-                const index = occupiedPositions.indexOf(2);
-                occupiedPositions.splice(index, 1);
-                occupiedPositions.push(nearestPosition.index)
-            }
+
+            // aggiorna solo l'id dell'oggetto
+            // all' up aggiorna la lista dei no
+            // console.log(placedCubesData[0]);
+           placedCubesData[CurrentDataId].positionIndex = nearestPosition.index
         } else {
             console.log("No available positions to move to.");
         }
     }
 }
+
 
 export function handleMouseUp(event, controls) {
     if (selectedObject) {
@@ -156,15 +168,17 @@ export function handleMouseUp(event, controls) {
         if (newCube) {
             selectedObject = newCube
         }
+        occupiedPositions.length = 0
+        occupiedPositions.push(...placedCubesData.map(e => e.positionIndex))
+        console.log(occupiedPositions);
         isDragging = false;
         newCube = null;
     }
 }
 
 
-function findNearestAvailablePosition(currentPosition ) {
+function findNearestAvailablePosition(currentPosition, availablePositions ) {
     // Filter out occupied positions
-    const availablePositions = avaiblePosition // avaiblePosition.filter((item, index) => !occupiedPositions.includes(index));
 
     // Start with the first available position as the nearest
     if (availablePositions.length === 0) {
@@ -179,8 +193,8 @@ function findNearestAvailablePosition(currentPosition ) {
     // Iterate through the remaining available positions to find the closest one
     for (let i = 1; i < availablePositions.length; i++) {
         const distance = currentPosition.distanceTo(availablePositions[i]);
-        
-        if (distance < minDistance) {
+
+        if (distance < minDistance && !occupiedPositions.includes(i)) {
             nearestPosition = availablePositions[i];
             minDistance = distance;
             indexPos = i

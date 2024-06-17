@@ -3,7 +3,7 @@ import { GUI } from 'dat.gui';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 import { metallicMaterial1, metallicMaterial2, metallicMaterial3, metallicMaterialRed, metallicMaterialBlue } from './materials';
-import { avaiblePosition } from './controls'
+import { availablePositions } from './controls'
 
 var pi = Math.PI;
 
@@ -144,7 +144,7 @@ loader.load(
             }
         }
       
-      avaiblePosition.push(...[cilinders.map(e => e.position)])
+      availablePositions.push(...cilinders.map(e => e.position))
     },
   (xhr) => {
     console.log((xhr.loaded / xhr.total * 100) + '% loaded');

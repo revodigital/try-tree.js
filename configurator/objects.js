@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { GUI } from 'dat.gui';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
-import { metallicMaterial1,metallicMaterial2,metallicMaterial3,metallicMaterialRed, metallicMaterialBlue } from './materials';
+import { metallicMaterial1, metallicMaterial2, metallicMaterial3, metallicMaterialRed, metallicMaterialBlue } from './materials';
+import { avaiblePosition } from './controls'
 
 var pi = Math.PI;
 
@@ -142,6 +143,8 @@ loader.load(
                 scene.add(clone);  // Add each clone to the scene
             }
         }
+      
+      avaiblePosition.push(...[cilinders.map(e => e.position)])
     },
   (xhr) => {
     console.log((xhr.loaded / xhr.total * 100) + '% loaded');
@@ -235,14 +238,18 @@ loader.load(
     (object) => {
     object.traverse((child) => {
       if (child.isMesh) {
-        child.material = metallicMaterial2;
+          child.material = metallicMaterial2;
+          child.customType = 'movable'
       }
     });
         const i = 3.6
+        // object.customType = 'movable'
 
         object.scale.set(fbxScale * i, fbxScale * i, fbxScale * i);
         object.rotateX(degToRad(90))
         eletrPart = object
+
+        // console.log(eletrPart);
 
         eletrPart1 = eletrPart.clone(); 
         eletrPart2 = eletrPart.clone(); 

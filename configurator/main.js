@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupLights } from './lights';
 import { setupObjects, crateBoard } from './objects';
-import { setupControls, handleMouseDown, handleMouseMove, handleMouseUp } from './controls';
+import { setupControls, handleMouseDown, handleMouseMove, handleMouseUp, onKeyDown} from './controls';
 import { setupPostProcessing } from './postprocessing';
 
 export const scene = new THREE.Scene();
@@ -65,6 +65,7 @@ const composer = setupPostProcessing(renderer, scene, camera);
 window.addEventListener('mousedown', (event) => handleMouseDown(event, controls, scene, camera, composer));
 window.addEventListener('mousemove', (event) => handleMouseMove(event, scene, camera));
 window.addEventListener('mouseup', (event) => handleMouseUp(event, controls, composer));
+document.addEventListener('keydown', (event)=> onKeyDown(event, controls, composer));
 
 function animate() {
     requestAnimationFrame(animate);

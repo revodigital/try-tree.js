@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { scene, camera } from './main';
 import { cilinders, eletrPart ,eletrPart1, eletrPart2} from './objects';
+import { addOutlinesBasedOnIntersections } from './postprocessing';
 
 
 const raycaster = new THREE.Raycaster();
@@ -61,6 +62,31 @@ function getMousePosition(event, domElement) {
 
 
 export function setupControls(controls, scene, camera, renderer) {
+
+    controls.enableRotate = true; // Disable rotation for a fixed top-down view
+    controls.enableDamping = true; // Enable damping (smooth camera movement)
+    controls.dampingFactor = 0.25; // Damping inertia
+    controls.screenSpacePanning = false; // Pan orthogonal to world-space direction camera.up
+
+    // Restrict panning and zooming
+    controls.minDistance = 5; // Minimum zoom distance
+    controls.maxDistance = 25; // Maximum zoom distance
+    // controls.maxPolarAngle = Math.PI / 2; // Limit the vertical angle to avoid flipping
+
+    // Restrict panning
+    controls.maxPan = new THREE.Vector3(20, 0, 20); // Maximum panning boundaries
+    controls.minPan = new THREE.Vector3(-20, 0, -20); // Minimum panning boundaries
+
+    // Limit the amount of orbit
+    const azimuthAngle = THREE.MathUtils.degToRad(30); // 30 degrees
+    const polarAngle = THREE.MathUtils.degToRad(20); // 20 degrees
+    controls.minAzimuthAngle = -azimuthAngle;
+    controls.maxAzimuthAngle = azimuthAngle;
+    controls.minPolarAngle = Math.PI / 2 - polarAngle; // Limit to 90 degrees minus 20 degrees
+    controls.maxPolarAngle = Math.PI / 2 + polarAngle; // Limit to 90 degrees plus 20 degrees
+
+
+
     const red = new THREE.LineBasicMaterial({ color: 0xff0000 });
     const points = [new THREE.Vector3(), new THREE.Vector3()];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -105,6 +131,7 @@ export function handleMouseDown(event, controls, scene) {
 
     const intersects = raycaster.intersectObjects(scene.children, true);
 
+    addOutlinesBasedOnIntersections(intersects)
     if (intersects.length > 0) {
         const firstIntersect = intersects[0];
         addDebugLine(camera.position, firstIntersect.point);
@@ -114,6 +141,8 @@ export function handleMouseDown(event, controls, scene) {
     if (intersects.length > 0 && cubes.includes(intersects[0].object?.parent?.id)) {
 
         selectedObject = intersects[0].object.parent;
+
+        // selectedObject.children[0].material = outlineMaterial
         
         console.log('intersected', selectedObject)
         controls.enabled = false;
@@ -223,54 +252,3 @@ export function onKeyDown(event, controls) {
     }
 }
 
-
-
-// export function onKeyDown(event, controls,) {
-//     console.log(`Key pressed: ${event.key} with selectedObject: ${selectedObject}`);
-//     const allowedPositions = cilinders.map(e => e.position)
-//     if (!selectedObject) return;
-
-//     let currentPosition = selectedObject.position.clone(); // Clone current position to modify
-//     let newPosition;
-
-//     // Check which key was pressed and calculate the potential new position
-//     switch (event.key) {
-//         case 'd': // Move right
-//             newPosition = findNearestAvailablePosition(
-//                 new THREE.Vector3(currentPosition.x + 10, currentPosition.y, currentPosition.z),
-//                 allowedPositions,
-//                 occupiedPositions.filter(pos => pos.z === currentPosition.z) // Filter for the same z-axis
-//             );
-//             break;
-//         case 'a': // Move left
-//             newPosition = findNearestAvailablePosition(
-//                 new THREE.Vector3(currentPosition.x - 10, currentPosition.y, currentPosition.z),
-//                 allowedPositions,
-//                 occupiedPositions.filter(pos => pos.z === currentPosition.z) // Filter for the same z-axis
-//             );
-//             break;
-//         case 'w': // Move forward
-//             newPosition = findNearestAvailablePosition(
-//                 new THREE.Vector3(currentPosition.x, currentPosition.y, currentPosition.z - 10),
-//                 allowedPositions,
-//                 occupiedPositions.filter(pos => pos.x === currentPosition.x) // Filter for the same x-axis
-//             );
-//             break;
-//         case 's': // Move backward
-//             newPosition = findNearestAvailablePosition(
-//                 new THREE.Vector3(currentPosition.x, currentPosition.y, currentPosition.z + 10),
-//                 allowedPositions,
-//                 occupiedPositions.filter(pos => pos.x === currentPosition.x) // Filter for the same x-axis
-//             );
-//             break;
-//         default:
-//             return; // Exit if other keys are pressed
-//     }
-
-//     // If a new position is found, move the selected object to that position
-//     if (newPosition) {
-//         selectedObject.position.copy(newPosition);
-//     } else {
-//         console.log("No available positions to move to in the desired direction.");
-//     }
-// }

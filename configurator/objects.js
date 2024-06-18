@@ -4,6 +4,7 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 import { metallicMaterial1, metallicMaterial2, metallicMaterial3, metallicMaterialRed, metallicMaterialBlue } from './materials';
 import { availablePositions } from './controls'
+import { setBasicTube } from './tube'
 
 var pi = Math.PI;
 
@@ -143,16 +144,30 @@ loader.load(
         const initialY = -totalHeight / 2 + objectHeight / 2;
 
         // Create horizontal arrays of objects
-        for (let i = 0; i < verticalCount; i++) {
+      // for (let i = 0; i < verticalCount; i++) {
+      //       for (let j = 0; j < horizontalCount; j++) {
+      //           let clone = object.clone();  // Clone the object for each instance
+      //           // Position each clone in a grid, centered
+      //           clone.position.x = initialX + j * (objectWidth + horizontalSpacing);
+      //           clone.position.y = initialY + i * (objectHeight + verticalSpacing);
+                
+      //           scene.add(clone);  // Add each clone to the scene
+      //       }
+      //   }
+
+      for (let i = 0; i < 2; i++) {
+        const ii = i == 0? 0 : verticalCount - 1
             for (let j = 0; j < horizontalCount; j++) {
                 let clone = object.clone();  // Clone the object for each instance
                 // Position each clone in a grid, centered
                 clone.position.x = initialX + j * (objectWidth + horizontalSpacing);
-                clone.position.y = initialY + i * (objectHeight + verticalSpacing);
+                clone.position.y = initialY + ii * (objectHeight + verticalSpacing);
                 
                 scene.add(clone);  // Add each clone to the scene
             }
         }
+
+      
 
         const HorizzontalNumberBorder = 11
         const VerticalNumberBorder = verticalCount-1
@@ -224,6 +239,8 @@ loader.load(
     console.log('An error happened', error); 
   }
 );
+  
+  setBasicTube(scene)
 
 
 }

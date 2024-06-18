@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { scene } from './main';
 
 function createComplexCableConnection(object1, object2, scene, verticalOffset = 5, tubeRadius = 0.1) {
     // Define points for the path
@@ -43,7 +44,7 @@ function lerpAxis(start, end,axieName, t) {
     return start.position[axieName] + ((end.position[axieName] -start.position[axieName]) * t);
 }
 
-function createSmoothCableConnection(object1, object2, scene, verticalOffset = 5, tubeRadius = 0.1) {
+export function createSmoothCableConnection(object1, object2, tubeRadius = 0.1, verticalOffset = 5) {
     // Define points for the path
     let points = [];
     points.push(object1.position.clone());
@@ -86,7 +87,7 @@ export function setBasicTube(scene) {
     scene.add(object1);
     scene.add(object2);
 
-    const tube = createSmoothCableConnection(object1, object2, scene,);
+    const tube = createSmoothCableConnection(object1, object2, );
     // const tube2 = createComplexCableConnection(object1, object2, scene,);
     // scene.add(tube)
 }

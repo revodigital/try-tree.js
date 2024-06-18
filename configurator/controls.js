@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { scene, camera } from './main';
 import { cilinders, eletrPart ,eletrPart1, eletrPart2} from './objects';
 import { addOutlinesBasedOnIntersections } from './postprocessing';
+import { createSmoothCableConnection } from './tube';
 
 
 const raycaster = new THREE.Raycaster();
@@ -11,17 +12,24 @@ let intersection = new THREE.Vector3();
 let selectedObject = null;
 
 let isDragging = false;
+let useCable = false;
 let newCube = null;
 const cubeItem = document.getElementById('cube-item');
 const cubeItem2 = document.getElementById('cube-item2');
 const cubeItem3 = document.getElementById('cube-item3');
+const cableButton = document.getElementById('cable');
 
 export const cubes = []
 export const placedCubesData = []
 export const occupiedPositions = []
 export const availablePositions = []
 
+cableButton.addEventListener('mousedown', (event) => {
+    useCable = !useCable
+});
+
 cubeItem.addEventListener('mousedown', (event) => {
+    if (useCable) return;
     isDragging = true;
     newCube =  eletrPart.clone(); 
     newCube.position.set(0,1000,1) 
@@ -35,6 +43,7 @@ cubeItem.addEventListener('mousedown', (event) => {
 });
 
 cubeItem2.addEventListener('mousedown', (event) => {
+    if (useCable) return;
     isDragging = true;
     newCube =  eletrPart1.clone(); 
     newCube.position.set(0,1000,1) 
@@ -44,6 +53,7 @@ cubeItem2.addEventListener('mousedown', (event) => {
 });
 
 cubeItem3.addEventListener('mousedown', (event) => {
+    if (useCable) return;
     isDragging = true;
     newCube =  eletrPart2.clone(); 
     newCube.position.set(0,1000,1) 
@@ -62,7 +72,6 @@ function getMousePosition(event, domElement) {
 
 
 export function setupControls(controls, scene, camera, renderer) {
-
     controls.enableRotate = true; // Disable rotation for a fixed top-down view
     controls.enableDamping = true; // Enable damping (smooth camera movement)
     controls.dampingFactor = 0.25; // Damping inertia
@@ -85,8 +94,6 @@ export function setupControls(controls, scene, camera, renderer) {
     controls.minPolarAngle = Math.PI / 2 - polarAngle; // Limit to 90 degrees minus 20 degrees
     controls.maxPolarAngle = Math.PI / 2 + polarAngle; // Limit to 90 degrees plus 20 degrees
 
-
-
     const red = new THREE.LineBasicMaterial({ color: 0xff0000 });
     const points = [new THREE.Vector3(), new THREE.Vector3()];
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -94,7 +101,7 @@ export function setupControls(controls, scene, camera, renderer) {
     const rayLine = new THREE.Line(geometry, red);
     scene.add(rayLine);
 
-    window.addEventListener('mousedown', (event) => handleMouseDown(event, controls, scene, camera));
+    window.addEventListener('mousedown', (event) => handleMouseDown(event, controls,));
     window.addEventListener('mousemove', (event) => handleMouseMove(event, scene, camera));
     window.addEventListener('mouseup', (event) => handleMouseUp(event, controls));
 }
@@ -119,45 +126,52 @@ function addDebugLine(start, end) {
 }
 
 
-export function handleMouseDown(event, controls, scene) {
+export function handleMouseDown(event, controls) {
     event.preventDefault();
-
-    // availablePositions.filter((val,index)=> !occupiedPositions.includes(index))
-
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-
     const intersects = raycaster.intersectObjects(scene.children, true);
-
     addOutlinesBasedOnIntersections(intersects)
+
     if (intersects.length > 0) {
         const firstIntersect = intersects[0];
         addDebugLine(camera.position, firstIntersect.point);
-
     }
+    
+    if (intersects.length > 0 && cubes.includes(intersects[0].object?.parent?.id ?? -1000)) {
+        if (useCable) {
+            if (selectedObject) {
+                otherObject = selectedObject
+                selectedObject = intersects[0].object.parent;
 
-    if (intersects.length > 0 && cubes.includes(intersects[0].object?.parent?.id)) {
+                console.log('connectin two objects');
+                // connect two object
+                createSmoothCableConnection(otherObject, selectedObject, 0.04)
 
+                selectedObject = null
+                otherObject = null
+            }
+            selectedObject = intersects[0].object.parent;
+            return 
+        }
         selectedObject = intersects[0].object.parent;
-
-        // selectedObject.children[0].material = outlineMaterial
-        
         console.log('intersected', selectedObject)
+
+
         controls.enabled = false;
-        
-        // Questo offset può essere usato per muovere l'oggetto in maniera consistente rispetto al punto di click originale durante operazioni di trascinamento o altri tipi di manipolazione interattiva.
         
         const planeIntersect = raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), intersection);
         offset.copy(planeIntersect).sub(selectedObject.position);
     }
 }
 
+let otherObject
 let CurrentDataId 
 
 export function handleMouseMove(event, scene) {
-    if (isDragging && (newCube || selectedObject)) {
+    if (isDragging && (newCube || selectedObject) && !useCable) {
 
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -167,8 +181,6 @@ export function handleMouseMove(event, scene) {
         const objId = (newCube || selectedObject).id
         const planeIntersect = raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), intersection);
         const newPosition = planeIntersect.sub(offset);
-
-        // console.log(currentIndexPos );
 
         const nearestPosition = findNearestAvailablePosition(newPosition, availablePositions);
 

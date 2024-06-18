@@ -213,7 +213,8 @@ loader.load(
         // object.customType = 'movable'
 
         object.scale.set(fbxScale * i, fbxScale * i, fbxScale * i);
-        object.rotateX(degToRad(90))
+      object.rotateX(degToRad(90))
+      console.log(object);
         eletrPart = object
 
         // console.log(eletrPart);
@@ -240,7 +241,7 @@ loader.load(
   }
 );
   
-  setBasicTube(scene)
+  // setBasicTube(scene)
 
 
 }
